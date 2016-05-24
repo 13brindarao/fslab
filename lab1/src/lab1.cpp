@@ -6,59 +6,92 @@
 // Description : Hello World in C++, Ansi-style
 //============================================================================
 
-#include <iostream>
-#include<string.h>
+#include<iostream>
+#include<stdlib.h>
 #include<fstream>
-
+#include<string.h>
 using namespace std;
-fstream fp1,fp2;
 
-void reverse(char *);
-char str[30];
-
-int main()
+class student
 {
-	int ch,n,i;
-	cout<<"Enter your choice: 1.String reversal through terminal 2.String reversal through files" <<endl;
-	cin>>ch;
-	switch(ch)
+	char str[100];
+	public: friend void console();
+			friend void file();
+};
+
+void console()
+{
+	int i,j,n,length;
+	cout<<"\nEnter the number of strings: ";
+	cin>>n;
+	student s[n];
+	cout<<"\nEnter the strings: ";
+	for(i=0;i<n;i++)
+		cin>>s[i].str;
+	cout<<"String in reverse: \n";
+	for(i=0;i<n;i++)
 	{
-		case 1:cout<<"Enter the number of names:";
-		cin>>n;
-		for(i=0;i<n;i++)
-		{
-		    cout<<"Enter the string:"<<endl;
-		    cin>>str;
-		    reverse(str);
-		}
-		break;
-		
-		case 2: fp1.open("input.txt",ios::in);
-		fp2.open("output.txt",ios::out);
-		while(!fp1.eof())
-		{
-			fp1.getline(str,21);
-			reverse(str);
-			fp2<<str;
-		}
-		fp1.close();
-		fp2.close();
-		break;
-		
-		default: cout<<"Wrong choice"<<endl;
-		break;
+		length=strlen(s[i].str);
+		for(j=length-1;j>=0;j--)
+			cout<<s[i].str[j];
+		cout<<"\n";
 	}
 }
 
-void reverse(char *)
+void file()
 {
-	int len,i;
-	len=strlen(str);
-	for(i=0;i<len/2;i++)
+	int i;
+	fstream f1,f2;
+	char buffer[100],fname1[100],fname2[100];
+	cout<<"\nEnter file name to read strings from: ";
+	cin>>fname1;
+	cout<<"\nEnter file name to store the output: ";
+	cin>>fname2;
+	f1.open(fname1,ios::in);
+	f2.open(fname2,ios::out);
+	if(!f1)
 	{
-		char temp=str[i];
-		str[i]=str[len-1-i];
-		str[len-1-i]=temp;
+		cout<<"File: "<<fname1<<" does not exist!\n";
+		exit(0);
 	}
-	cout<<"The reverse of the string is:"<<str<<endl;
+	if(!f2)
+	{
+		cout<<"File: "<<fname2<<" does not exist!\n";
+		exit(0);
+	}
+	while(!f1.eof())
+	{
+		f1.getline(buffer,25);
+		for(i=strlen(buffer)-1;i>=0;i--)
+			f2<<buffer[i];
+		f2<<"\n";		
+	}
+	f1.close();
+	f2.close();
+	cout<<"\n";
+}
+
+int main()
+{
+	int choice;
+	while(1)
+	{
+		cout<<"\nTo perform string reversal operation for a given input\nEnter 1.Console\t2.File\t3.Exit\n";
+		cin>>choice;
+		switch(choice)
+		{
+			case 1: cout<<"Standard I/O operation via console";
+					console();
+					break;
+			
+			case 2: cout<<"File Operation";
+					file();
+					break;
+					
+			case 3: exit(0);
+			
+			default: cout<<"Invlaid input!";
+		}
+	}
+	return 0;
 }
